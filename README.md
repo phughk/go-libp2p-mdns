@@ -4,7 +4,6 @@
 
 The Library follows [Libp2p MDNS specification](https://github.com/libp2p/specs/blob/master/discovery/mdns.md) for peer discovery. 
 
-
 ##### Implementation Status
 
 Parts that are Implemented 
