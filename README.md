@@ -37,3 +37,4 @@ Parts that Need to be Implemented
 *   Code Documentation
 *   Better Error Handling
 
+<i>This project is a by product of the [bounty](https://github.com/ethberlinzwei/Bounties/issues/19) in the [Eth Hack Zwei](https://github.com/ethberlinzwei/KnowledgeBase). Special thanks to @raulk </i>
