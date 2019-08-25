@@ -21,7 +21,7 @@ func (c *Connection)Poll() error {
 }
 
 // recv is a long running routine to receive packets from an interface
-func (c *Connection) readPackets() {
+func (c *Connection)readPackets() {
 	if c == nil {
 		return
 	}
@@ -38,7 +38,6 @@ func (c *Connection) readPackets() {
 }
 
 func (c * Connection) ParsePacket(buf []byte, from net.Addr) error {
-	buf = []byte {115, 15, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 4, 95, 112, 50, 112, 4, 95, 117, 100, 112, 5, 108, 111, 99, 97, 108, 0, 0, 12, 0, 1}
 	message := unpackMessage(buf)
 	if message.ServiceName != SERVICE_NAME {
 		return nil
