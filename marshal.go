@@ -5,7 +5,7 @@ import (
 	peer "github.com/libp2p/go-libp2p-core/peer"
 	"encoding/base32"
 	"encoding/binary"
-	"encoding/hex"
+	// "encoding/hex"
 	"strings"
 	"time"
 	"math/rand"
@@ -84,7 +84,7 @@ func BuildQuerry() ([]byte, error) {
 	if len(query) > 33 {
 		return nil, ErrExcessBodySize
 	}
-	fmt.Print(hex.EncodeToString(query))
+	// fmt.Print(hex.EncodeToString(query))
 	return query, nil
 }
 
@@ -142,24 +142,67 @@ func BuildQueryResponse(
 	response = u16Append(response, 0x0001)
 
     // TTL for the answer
-    response = u32Append(response, uint32(duration.Seconds()));
+    response = u32Append(response, uint32(duration.Seconds()))
 
 
     //Encode Id to Base58
-    // peerIDBase58 := peerID.Preety()
+    peerIDBase58 := peerID.String()
 
     //peerName as base 32 encoding of peer id
     peerName := peerNameFromID(peerID)
+    var peerIdByte []byte
+    peerIdByte, err = nameAppend(peerIdByte, peerName)
+    if(len(peerIdByte) > 0xffff) {
+    	return nil, ErrExcessBodySize
+    }
+    response = u16Append(response, uint16(len(peerIdByte)))
+    response = arrayJoin(response, peerIdByte)
 
      // The TXT records for answers.
-     for _, addr := range addresses {
-     	txtToSend := fmt.Sprintf("dnsaddr=%s/p2p/%s", addr.String(), SERVICE_NAME)
-     	var buff []byte
-     	buff = appendCharacterString(buff, txtToSend)
-     	fmt.Print(string(buff), "\n")
-     }
-    fmt.Print(peerName)
+    for _, addr := range addresses {
+	 	txtToSend := fmt.Sprintf("dnsaddr=%s/p2p/%s", addr.String(), peerIDBase58)
+	 	var buff []byte
+	 	buff = appendCharacterString(buff, txtToSend)
+	 	fmt.Print(string(buff), "\n")
+    }
+    // fmt.Print(peerName)
 
     return response, nil
+}
+
+func arrayJoin(out []byte, entries []byte) []byte {
+	for _, c:= range entries {
+    	out = append(out, c)
+    }
+    return out
+}
+
+func appendTxtRecord(
+	out []byte, 
+	name []byte,
+	ttlSecs uint32,
+	entries []byte,
+) []byte {
+
+	// Name
+	out = arrayJoin(out, name)
+
+	// Flags
+	out = append(out, 0x00)
+	out = append(out, 0x10)
+	out = append(out, 0x80)
+	out = append(out, 0x01)
+
+	// TTL
+	out = u32Append(out, ttlSecs)
+
+	// Add the strings
+	// var buf []byte
+	// for c := range(entries) {
+	// 	if c.
+	// }
+
+	return out
+
 }
 
