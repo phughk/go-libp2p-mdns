@@ -8,12 +8,12 @@ The Library follows [Libp2p MDNS specification](https://github.com/libp2p/specs/
 
 .
 ├── ...
-├── mdns.go                      # Initialize the Server
-├── marshal.go                   # Serialize the mdns packets
-├── unmarshal.go                 # UnSerialize mdns packets
-├── service.go                   # The Services exposed my Mdns (eg: Poll(), ReadPacket(), etc)
-├── handler.go                   # Event handler Interface Peer Discovery and Network Interrupt
-├── log.go                       # Log Managment
+├── mdns.go                      # Initialize the Server. 
+├── marshal.go                   # Serialize the mdns packets. 
+├── unmarshal.go                 # UnSerialize mdns packets. 
+├── service.go                   # The Services exposed my Mdns (eg: Poll(), ReadPacket(), etc). 
+├── handler.go                   # Event handler Interface Peer Discovery and Network Interrupt. 
+├── log.go                       # Log Managment. 
 └── ...
 
 ##### Implementation Status
