@@ -28,7 +28,7 @@ type Connection struct {
 }
 
 func Init() *Connection{
-	packetConn, err := reuse.ListenPacket("udp4", "127.0.0.1:5353")
+	packetConn, err := reuse.ListenPacket("udp4", "0.0.0.0:5353")
 	if err != nil {
 		logf("[ERR] mdns: Failed to start udp4: %v", err)
 	}

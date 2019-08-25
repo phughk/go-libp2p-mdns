@@ -8,6 +8,7 @@ import (
 	// "encoding/hex"
 	"strings"
 	"time"
+	"math"
 	"math/rand"
 	"fmt"
 )
@@ -159,13 +160,19 @@ func BuildQueryResponse(
     response = arrayJoin(response, peerIdByte)
 
      // The TXT records for answers.
+     var entries [][]byte
     for _, addr := range addresses {
 	 	txtToSend := fmt.Sprintf("dnsaddr=%s/p2p/%s", addr.String(), peerIDBase58)
-	 	var buff []byte
-	 	buff = appendCharacterString(buff, txtToSend)
-	 	fmt.Print(string(buff), "\n")
+	 	var entry []byte
+	 	entry = appendCharacterString(entry, txtToSend)
+	 	fmt.Print(string(entry), "\n")
+	 	entries = append(entries, entry)
     }
-    // fmt.Print(peerName)
+    response, _ = appendTxtRecord(response, peerName, uint32(duration.Seconds()), entries)
+    // The DNS specs specify that the maximum allowed size is 9000 bytes.
+    if len(response) > 9000 {
+        return nil, ErrExcessBodySize
+    }
 
     return response, nil
 }
@@ -181,8 +188,8 @@ func appendTxtRecord(
 	out []byte, 
 	name []byte,
 	ttlSecs uint32,
-	entries []byte,
-) []byte {
+	entries [][]byte,
+) ([]byte, error) {
 
 	// Name
 	out = arrayJoin(out, name)
@@ -196,11 +203,26 @@ func appendTxtRecord(
 	// TTL
 	out = u32Append(out, ttlSecs)
 
-	// Add the strings
-	// var buf []byte
-	// for c := range(entries) {
-	// 	if c.
-	// }
+	var buf []byte
+	for entry:= range(entries) {
+		if len(entry) > 256 {
+			return nil, ErrExcessBodySize
+		}
+
+		buf = append(buf, uint8(len(entry)));
+		buf = arrayJoin(buf, entry)		
+	}
+
+	if len(buf) == 0 {
+		buf = append(buf, 0)
+	}
+
+	if len(buf) > math.MaxInt16 {
+		return nil, ErrExcessBodySize
+	}
+
+	out = u16Append(out, len(buf))
+    out = arrayJoin(out, buf);
 
 	return out
 
